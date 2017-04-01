@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Onexplorer探索者登陆注册页面</title>
+    <load file="__PUBLIC__/Css/log.css"/>
+    <load file="__PUBLIC__/Js/jquery.js"/>
+    <script type="text/javascript">
+        $(function(){
+
+            //提交实现
+            $(".tijiao").click(function(){
+                if(!$("#zhanghao").val()||!$("#mima").val()){
+                    $("#err").show();
+                    $("#err").html("用户名或密码不能为空");
+                    return;
+                }else if(!$("#cmima").val()||!$("#em").val()){
+                    $("#err").show();
+                    $("#err").html("确认密码或邮箱不能为空");
+                    return;
+                }else if($("#cmima").val()!=$("#mima").val()){
+                    $("#err").show();
+                    $("#err").html("密码和确定密码不一致");
+                    return;
+                }else{
+                    $.ajax({
+                        type:"POST",
+                        url:"__MODULE__/Login/checkreg",
+                        data:"username="+$("#zhanghao").val()+"&password="+$("#mima").val()+"&password2="+$("#cmima").val()+"&email="+$("#em").val(),
+                        success:function(msg){
+                            if(msg!=""){
+                                $("#err").show();
+                                $("#err").html(msg);
+                                return;
+                            }else {
+                                window.location.href="<{$Think.session.url}>";
+                            }
+
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+
+<!--最上面的脚步字样-->
+<div id="log_first"><img src="__PUBLIC__/Images/common/17.png"/></div>
+
+
+<!--中间的这部分-->
+<div id="log_center">
+
+    <div id="log_center_back">
+        <!--注册框-->
+        <div id="denglukuang2">
+
+            <!--用户名+密码-->
+            <div class="deng_up">
+                <img src="__PUBLIC__/Images/common/24.png" style="height:auto;"/><br>
+
+                <input type="text" name="username" placeholder="请输入用户名:由汉字数字下划线和字母组成" id="zhanghao"/>
+
+                <br><br>
+
+                <input type="password" name="password" placeholder="请输入密码" id="mima"/>
+
+                <br><br>
+
+                <input type="password" name="password2" placeholder="请输入确认密码" class="mima2" id="cmima"/>
+
+                <br><br>
+
+                <input type="text" name="email" placeholder="请输入邮箱地址" class="mima2" id="em"/>
+
+
+            </div>
+
+
+            <!--错误提示框-->
+            <div  id="err"></div>
+
+
+            <!--登陆-->
+            <div class="deng_down">
+                <img src="__PUBLIC__/Images/common/25.png" class="tijiao" style="cursor: pointer"/>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

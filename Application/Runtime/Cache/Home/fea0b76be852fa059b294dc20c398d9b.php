@@ -1,0 +1,163 @@
+<?php if (!defined('THINK_PATH')) exit();?>
+<!DOCTYPE html>
+<html>
+<head>
+    <script charset="utf-8" src="/shop/Public/js/jquery.min.js?v=01291"></script>
+    <script charset="utf-8" src="/shop/Public/js/global.js?v=01291"></script>
+    <script charset="utf-8" src="/shop/Public/js/bootstrap.min.js?v=01291"></script>
+    <script charset="utf-8" src="/shop/Public/js/template.js?v=01291"></script>
+    <script charset="utf-8" src="/shop/Public/js/bootstrap-table-zh-CN.js"></script>
+    <script charset="utf-8" src="/shop/Public/js/bootstrap-table.js"></script>
+    <script charset="utf-8" src="/shop/Public/js/toastr.min.js"></script>
+    <script charset="utf-8" src="/shop/Public/js/bootstrap-editable.js"></script>
+
+    <link rel="stylesheet" href="/shop/Public/css/bootstrap-editable.css">
+    <link rel="stylesheet" href="/shop/Public/css/toastr.css">
+    <link rel="stylesheet" href="/shop/Public/css/bootstrap-table.css">
+    <link rel="stylesheet" href="/shop/Public/css/bootstrap.css?v=01291">
+    <link rel="stylesheet" href="/shop/Public/css/style.css?v=1?v=01291">
+    <link rel="stylesheet" href="/shop/Public/css/member.css?v=01291">
+    <link rel="stylesheet" href="/shop/Public/css/order3.css?v=01291"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="yes" name="apple-touch-fullscreen">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1;user-scalable=no;">
+    <script charset="utf-8" src="/shop/Public/js/shopCart.js?v=01291"></script>
+    <title>交易记录</title>
+</head>
+<body>
+<div class="fanhui_cou">
+    <div class="fanhui_1"></div>
+    <div class="fanhui_ding">顶部</div>
+</div>
+<header class="header header_1">
+    <div class="fix_nav">
+        <div class="nav_inner">
+            <a class="nav-left back-icon" href="javascript:history.back();">返回</a>
+            <div class="tit">我的交易</div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container white-bg">
+    <div class="row rowcar">
+        <table data-toggle="table" data-url="<?php echo U('Deals/getInfo');?>" id="table">
+             <thead>
+                <tr>
+                        <th data-field="de_goodsid">编号</th>
+                        <th data-field="de_id">编号</th>
+                        <th data-field="de_salewxh">卖家微信号</th>
+                        <th data-field="de_buywxh">买家微信号</th>
+                        <th data-field="gd_name">名称</th>
+                        <th data-field="salename">卖方</th>
+                        <th data-field="buyname">买方</th>
+                        <th data-field="de_flag">状态</th>
+                        <th data-field="operation"
+                            data-formatter="actionFormatter"
+                            data-events="actionEvents">操作</th>
+                </tr>
+               </tr>
+            </thead>
+        </table>
+
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form role="form">
+                            <input type="hidden" name="de_id" id="de_id"/>
+                            <div class="form-group">
+                                <label>修改状态</label>
+                                <select class="form-control" id="de_flag">
+                                    <option value="正在交易">正在交易</option>
+                                    <option value="完成交易">完成交易</option>
+                                </select>
+
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-info" onclick="updateInfo()">提交更改</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+    </div>
+</div>
+
+<div class="clear"></div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        toastr.options.positionClass = 'toast-bottom-center';
+
+        //隐藏行列
+        $('#table').bootstrapTable('hideColumn', 'de_goodsid');
+        $('#table').bootstrapTable('hideColumn', 'de_id');
+        $('#table').bootstrapTable('hideColumn', 'de_salewxh');
+        $('#table').bootstrapTable('hideColumn', 'de_buywxh');
+
+    });
+
+
+    var API_URL = "<?php echo U('Deals/getInfo');?>";
+    var $table = $('#table').bootstrapTable({url: API_URL});
+
+    function actionFormatter(value, row, index) {
+        return '<a href="#" class="mod" >修改</a> ' + '<a href="#" class="delete">删除</a>';
+    }
+
+    window.actionEvents = {
+        'click .mod': function(e, value, row) {
+            $("#de_id").val(row.de_id);
+            $('#myModal').modal('show');
+        },
+        'click .delete' : function(e, value, row) {
+            if (confirm('确定删除该记录吗?')) {
+                $.ajax({
+                    url:"<?php echo U('Deals/deleteInfo');?>",
+                    type: 'POST',
+                    data:{"de_id":row.de_id},
+                    success: function (data) {
+                        if(data['status']){
+                            $table.bootstrapTable('refresh');
+                            toastr.success('删除成功!',1500);
+                        }
+                    }, error: function () {
+                        toastr.error('删除失败，请稍后重试!',1500);
+                     }
+                })
+            }
+        }
+    }
+
+    //更新状态
+    function updateInfo(){
+        $.ajax({
+            url:"<?php echo U('Deals/updateInfo');?>",
+            type: 'POST',
+            data:{
+                "de_id":$("#de_id").val(),
+                "de_flag":$("#de_flag").val()
+            },
+            success: function (data) {
+                if(data['status']){
+                    $table.bootstrapTable('refresh');
+                    $('#myModal').modal('hide')
+                    toastr.success('状态修改成功!',1500);
+                }
+            }, error: function () {
+                $('#myModal').modal('hide')
+                toastr.error('状态修改失败，请稍后重试!',1500);
+            }
+        })
+    }
+</script>
+</body></html>

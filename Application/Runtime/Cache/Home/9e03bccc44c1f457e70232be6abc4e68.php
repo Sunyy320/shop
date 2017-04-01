@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>I am sorry,You are not our school student;

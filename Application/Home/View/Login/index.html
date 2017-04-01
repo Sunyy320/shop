@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Onexplorer探索者登陆</title>
+    <load file="__PUBLIC__/Css/log.css"/>
+    <load file="__PUBLIC__/Js/jquery.js"/>
+    <load file="__PUBLIC__/Js/jquery.min.js"/>
+
+    <script type="text/javascript">
+        $(function(){
+
+            //提交实现
+            $(".tijiao").click(function(){
+                if(!$("#zhanghao").val()||!$("#mima").val()){
+                    $("#err").show();
+                    $("#err").html("用户名或密码不能为空");
+                    return;
+                }else{
+                    $.ajax({
+                        type:"POST",
+                        url:"<{:U('login')}>",
+                        dataType:"json",
+                        //data:'{username:$("#zhanghao").val(),password:$("#mima").val()}',
+                        data:"username="+$("#zhanghao").val()+"&password="+$("#mima").val(),
+                        success:function(msg){
+                            if(msg.info=="error"){
+                                $("#err").show();
+                                $("#err").html("用户名或者密码错误");
+                                return;
+                            }else{
+                                window.location.href=msg.callback;
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+
+
+<body>
+<!--最上面的脚步字样-->
+<div id="log_first"><img src="__PUBLIC__/Images/common/17.png"/></div>
+
+
+<!--中间的这部分-->
+<div id="log_center">
+
+    <div id="log_center_back">
+        <!--登录框-->
+        <div id="denglukuang">
+
+                <!--用户名+密码-->
+            <div class="deng_up">
+                <img src="__PUBLIC__/Images/common/20.png" style="height:auto;"/><br>
+
+                <input type="text" name="username" placeholder="请输入用户名" id="zhanghao"/>
+
+                <br><br>
+
+                <input type="password" name="password" placeholder="请输入密码" id="mima"/>
+
+            </div>
+
+            <!--注册+忘记密码-->
+            <div class="deng_mid">
+
+                <a href="reg.html" style="text-decoration:none;">
+                    <img src="__PUBLIC__/Images/common/23.png" />
+                </a>
+
+                &nbsp;
+
+                <a href="#" style="text-decoration:none;">
+                    <img src="__PUBLIC__/Images/common/26.png" />
+                </a>
+
+                <br/>
+            </div>
+
+            <!--错误提示框-->
+            <div  id="err"></div>
+
+
+
+            <!--登陆-->
+            <div class="deng_down">
+                <img src="__PUBLIC__/Images/common/22.png" class="tijiao" style="cursor: pointer"/>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+
+</html>
